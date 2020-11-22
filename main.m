@@ -1,9 +1,10 @@
 %The following code was used to analyze the dimensional system.
-function main(tim,ch,range)
+function main(tim,ch,range,filename)
 
-K1=10; K2=10; q1=1e-6; q2=1e-6; m1=1; m2=1;R1=1;R2=1;Ke= 8.987e9;
+K1=10; K2=10; q1=1; q2=1; m1=1; m2=1;R1=1;R2=1;Ke= 8.987e9;
 options=odeset('RelTol',1e-12,'Stats','on');
-Xo=[1;0;pi;-1;1;0;0;-.5];
+Xo=[1;1;pi;0.5;1;1;0;0.0];
+%Xo=[1;0;pi;-1;1;0;0;.5];
 tspan=[0,tim];
 
 tic
@@ -21,19 +22,25 @@ p2=plot(X7,X5);
 set(p2,'Color','red');
 
 elseif ch==2;
+    myVideo = VideoWriter(filename,'MPEG-4'); %open video file
+    myVideo.FrameRate = 10;  %can adjust this, 5 - 10 works well for me
+    open(myVideo)
+
     for j=1:5:size(X(:,1),1);
-    p1=plot(X3(1:j),X1(1:j));
-    hold on;
-    set(p1,'Color','blue');
-    hold on;
-    p2=plot(X7(1:j),X5(1:j));
-    set(p2,'Color','red');
-     M(j)=getframe;
+        p1=plot(X3(1:j),X1(1:j));
+        hold on;
+        set(p1,'Color','blue');
+        hold on;
+        p2=plot(X7(1:j),X5(1:j));
+        set(p2,'Color','red');
+        M(j)=getframe;
+        writeVideo(myVideo, M(j));
     end
 % 
-numtimes=3;
-fps=10;
-movie(M,numtimes,fps)
+    close(myVideo)
+    numtimes=3;
+    fps=10;
+    movie(M,numtimes,fps)
 
     
 elseif ch==3;
@@ -158,7 +165,7 @@ elseif ch==6;
     plot(t,linmom1);
     title('Linear Momentum of Ball 1');
     
-    Calculate the angular Momentum of Ball 2
+    %Calculate the angular Momentum of Ball 2
     angmom2=m2*power(X(:,5),2).*X(:,8);
     linmom2=m2*X(:,6);
     
